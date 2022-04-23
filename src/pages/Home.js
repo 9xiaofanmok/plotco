@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { db } from "../utils/firebase";
 import { collection, getDocs } from "firebase/firestore";
 
@@ -10,6 +9,19 @@ import FaqComponent from "../components/FaqComponent";
 
 const Home = () => {
     const [rooms, setRooms] = useState([]);
+    const [date, setDate] = useState();
+    const [startTime, setStartTime] = useState();
+    const [endTime, setEndTime] = useState();
+
+    const props = {
+        date,
+        setDate,
+        startTime,
+        setStartTime,
+        endTime,
+        setEndTime,
+    };
+
     const roomsCollectionRef = collection(db, "rooms");
 
     useEffect(() => {
@@ -43,17 +55,12 @@ const Home = () => {
                         </div>
                     </a>
                 </div>
-                <BookingComponent />
+                <BookingComponent {...props} />
             </div>
             <div id="Rooms" className="pt-1 md:pt-10">
                 {rooms.map((room) => {
                     return (
-                        <RoomDescriptionComponent
-                            title={room.name}
-                            description={room.description}
-                            img={room.img}
-                            key={room.id}
-                        />
+                        <RoomDescriptionComponent room={room} key={room.id} />
                     );
                 })}
             </div>
