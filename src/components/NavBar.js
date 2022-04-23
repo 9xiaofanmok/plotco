@@ -12,14 +12,20 @@ const NavBar = () => {
             />
             <div className="text-white text-xs sm:text-base md:text-lg lg:text-xl text-right flex flex-row">
                 <Link to="/">
-                    <div className="pl-3 sm:pl-10 lg:pl-20">Home</div>
+                    <div className="pl-3 sm:pl-10 lg:pl-20  hover:text-grey-100 visited:text-white">
+                        Home
+                    </div>
                 </Link>
-                <Link to="#/Rooms">
-                    <div className="pl-3 sm:pl-10 lg:pl-20">Our Rooms</div>
-                </Link>
-                <Link to="#/FAQs">
-                    <div className="pl-3 sm:pl-10 lg:pl-20">FAQs</div>
-                </Link>
+                <a href="#Rooms">
+                    <div className="pl-3 sm:pl-10 lg:pl-20 hover:text-grey-100 visited:text-white">
+                        Our Rooms
+                    </div>
+                </a>
+                <a href="#FAQs">
+                    <div className="pl-3 sm:pl-10 lg:pl-20 hover:text-grey-100 visited:text-white">
+                        FAQs
+                    </div>
+                </a>
             </div>
         </div>
     );

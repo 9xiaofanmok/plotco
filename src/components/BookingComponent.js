@@ -1,68 +1,51 @@
-import React from "react";
+import { DatePicker, TimePicker } from "antd";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
 import ButtonComponent from "./ButtonComponent";
 // import { Form, Button, DatePicker, TimePicker } from "antd";
 
 const BookingComponent = () => {
-    // const [form] = Form.useForm();
+    const [date, setDate] = useState();
+    const [startTime, setStartTime] = useState();
+    const [endTime, setEndTime] = useState();
+    const [disableBtn, setDisableBtn] = useState(true);
+
+    useEffect(() => {
+        if (date && startTime && endTime) {
+            setDisableBtn(false);
+        } else {
+            setDisableBtn(true);
+        }
+    }, [date, startTime, endTime]);
 
     return (
         <div className=" w-4/5 mx-auto">
             <div className="text-white text-lg mb-4 text-left">Book A Room</div>
 
             <div className="rounded-xl bg-white shadow-xl p-10">
-                {/* <Form layout="horizontal" form={form}>
-                    <Form.Item label="Date">
-                        <DatePicker />
-                    </Form.Item>
-                    <Form.Item label="Start Time">
-                        <TimePicker />
-                    </Form.Item>
-                    <Form.Item label="End Time">
-                        <TimePicker />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary">Submit</Button>
-                    </Form.Item>
-                </Form> */}
-
                 <form action="#">
-                    <div className="grid grid-cols-4 gap-6 text-left">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 text-left">
                         <div>
                             <label
                                 for="date"
-                                className="block text-sm font-medium text-gray-700"
+                                className="block text-sm font-medium text-gray-700 mb-2"
                             >
                                 Date
                             </label>
-                            {/* <input
-                                type="text"
-                                name="date"
-                                id="date"
-                                className="mt-1 focus:ring-plotco-blue focus:border-plotco-blue block w-full shadow-sm sm:text-sm border border-gray-200 rounded-md p-3"
-                            /> */}
                             <div className="flex items-center justify-center">
                                 <div
-                                    className="datepicker relative form-floating mb-3 xl:w-96"
+                                    className="datepicker relative form-floating mb-3 w-full"
                                     data-mdb-toggle-button="false"
                                 >
-                                    <input
-                                        type="text"
-                                        className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-plotco-blue focus:outline-none"
-                                        placeholder="Select a date"
-                                        data-mdb-toggle="datepicker"
+                                    <DatePicker
+                                        className="w-full h-11"
+                                        disabledDate={(current) =>
+                                            current < moment().endOf("day")
+                                        }
+                                        onChange={(date, dateString) => {
+                                            setDate(dateString);
+                                        }}
                                     />
-                                    <label
-                                        for="floatingInput"
-                                        className="text-gray-700"
-                                    >
-                                        Select a date
-                                    </label>
-                                    <button
-                                        className="datepicker-toggle-button"
-                                        data-mdb-toggle="datepicker"
-                                    >
-                                        <i className="fas fa-calendar datepicker-toggle-icon"></i>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -70,61 +53,50 @@ const BookingComponent = () => {
                         <div>
                             <label
                                 for="startTime"
-                                className="block text-sm font-medium text-gray-700"
+                                className="block text-sm font-medium text-gray-700 mb-2"
                             >
                                 Start Time
                             </label>
                             <div className="flex justify-center">
-                                <div className="timepicker relative form-floating mb-3 xl:w-96">
-                                    <input
-                                        type="text"
-                                        className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                        placeholder="Select a time"
-                                        data-mdb-toggle="input-toggle-timepicker"
+                                <div className="timepicker relative form-floating mb-3 w-full">
+                                    <TimePicker
+                                        className="w-full h-11"
+                                        onChange={(date, dateString) => {
+                                            setStartTime(dateString);
+                                        }}
+                                        format="HH:mm"
+                                        minuteStep={30}
                                     />
-                                    <label
-                                        for="floatingInput"
-                                        className="text-gray-700"
-                                    >
-                                        Select a time
-                                    </label>
                                 </div>
                             </div>
-                            {/* <input
-                                type="text"
-                                name="startTime"
-                                id="startTime"
-                                className="mt-1 focus:ring-plotco-blue focus:border-plotco-blue block w-full shadow-sm sm:text-sm border border-gray-200 rounded-md p-3"
-                            /> */}
                         </div>
 
                         <div>
                             <label
                                 for="endTime"
-                                className="block text-sm font-medium text-gray-700"
+                                className="block text-sm font-medium text-gray-700 mb-2"
                             >
                                 End Time
                             </label>
                             <div className="flex justify-center">
-                                <div className="timepicker relative form-floating mb-3 xl:w-96">
-                                    <input
-                                        type="text"
-                                        className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                        placeholder="Select a time"
-                                        data-mdb-toggle="input-toggle-timepicker"
+                                <div className="timepicker relative form-floating mb-3 w-full">
+                                    <TimePicker
+                                        className="w-full h-11"
+                                        onChange={(date, dateString) => {
+                                            setEndTime(dateString);
+                                        }}
+                                        format="HH:mm"
+                                        minuteStep={30}
                                     />
-                                    <label
-                                        for="floatingInput"
-                                        className="text-gray-700"
-                                    >
-                                        Select a time
-                                    </label>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="h-1/2 self-center">
-                            <ButtonComponent text="Check Availability" />
+                        <div className="h-1/2 self-center cursor-pointer">
+                            <ButtonComponent
+                                text="Check Availability"
+                                disabled={disableBtn}
+                            />
                         </div>
                     </div>
                 </form>

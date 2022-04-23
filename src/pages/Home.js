@@ -6,9 +6,6 @@ import { collection, getDocs } from "firebase/firestore";
 import BookingComponent from "../components/BookingComponent";
 import ButtonComponent from "../components/ButtonComponent";
 import RoomDescriptionComponent from "../components/RoomDescriptionComponent";
-import meetingRoomImg from "../assets/meetingRoom.png";
-import conferenceRoomImg from "../assets/conferenceRoom.png";
-import loungeRoomImg from "../assets/loungeRoom.png";
 import FaqComponent from "../components/FaqComponent";
 
 const Home = () => {
@@ -40,28 +37,29 @@ const Home = () => {
                         </div>
                     </div>
 
-                    <Link to="#/Rooms">
+                    <a href="#Rooms">
                         <div className="w-1/2 mx-auto">
                             <ButtonComponent text="View Our Rooms" />
                         </div>
-                    </Link>
+                    </a>
                 </div>
                 <BookingComponent />
             </div>
+            <div id="Rooms" className="pt-1 md:pt-10">
+                {rooms.map((room) => {
+                    return (
+                        <RoomDescriptionComponent
+                            title={room.name}
+                            description={room.description}
+                            img={room.img}
+                            key={room.id}
+                        />
+                    );
+                })}
+            </div>
 
-            {rooms.map((room) => {
-                return (
-                    <RoomDescriptionComponent
-                        title={room.name}
-                        description={room.description}
-                        img={room.img}
-                        key={room.id}
-                    />
-                );
-            })}
-
-            <div className="w-2/3 mx-auto mb-10">
-                <div className="text-lg lg:text-2xl mb-5">
+            <div className="w-2/3 mx-auto mb-24" id="FAQs">
+                <div className="text-lg lg:text-2xl mb-5 lg:mb-10">
                     Frequently Asked Questions
                 </div>
                 <FaqComponent
