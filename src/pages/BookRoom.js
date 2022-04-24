@@ -13,7 +13,7 @@ import {
     where,
 } from "firebase/firestore";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { DatePicker, TimePicker } from "antd";
+import { DatePicker, Input, TimePicker } from "antd";
 import moment from "moment";
 import ButtonComponent from "../components/ButtonComponent";
 
@@ -28,6 +28,7 @@ const BookRoom = () => {
     const [endTime, setEndTime] = useState();
     const [roomName, setRoomName] = useState();
     const [room, setRoom] = useState();
+    const [emailOwner, setEmailOwner] = useState();
     const [emails, setEmails] = useState();
 
     useEffect(() => {
@@ -105,6 +106,10 @@ const BookRoom = () => {
                     setErrorMsg(false);
                     setStartTime(moment(startTime, ["h:mm A"]).format("HH:mm"));
                     setEndTime(moment(endTime, ["h:mm A"]).format("HH:mm"));
+
+                    let allEmails = [...emails];
+                    allEmails.push(emailOwner);
+
                     const newBooking = {
                         roomId: searchParams.get("roomId"),
                         date,
@@ -112,8 +117,10 @@ const BookRoom = () => {
                             "HH:mm"
                         ),
                         endTime: moment(endTime, ["h:mm A"]).format("HH:mm"),
-                        emails,
+                        emails: allEmails,
+                        emailOwner,
                     };
+                    console.log(newBooking);
 
                     if (searchParams.get("roomId")) {
                     }
@@ -129,14 +136,14 @@ const BookRoom = () => {
 
                     const promises = [];
 
-                    for (let i = 0; i < emails.length; i++) {
+                    for (let i = 0; i < allEmails.length; i++) {
                         const templateParams = {
-                            owner_email: emails[0],
+                            owner_email: emailOwner,
                             room_name: roomName,
                             date,
                             start_time: startTime,
                             end_time: endTime,
-                            email: emails[i],
+                            email: allEmails[i],
                         };
                         promises.push(
                             new Promise((resolve) => {
@@ -202,7 +209,7 @@ const BookRoom = () => {
                                     data-mdb-toggle-button="false"
                                 >
                                     <DatePicker
-                                        className="w-full h-11"
+                                        className="w-full h-10"
                                         disabledDate={(current) =>
                                             current &&
                                             current < moment().startOf("day")
@@ -223,7 +230,7 @@ const BookRoom = () => {
                             <div className="flex justify-center">
                                 <div className="timepicker relative form-floating mb-3 w-full">
                                     <TimePicker.RangePicker
-                                        className="w-full h-11"
+                                        className="w-full h-10"
                                         onChange={(dates, dateStrings) => {
                                             setStartTime(dateStrings[0]);
                                             setEndTime(dateStrings[1]);
@@ -238,6 +245,22 @@ const BookRoom = () => {
                                                 ? moment(endTime, "h:mm a")
                                                 : null,
                                         ]}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Your Email
+                            </label>
+                            <div className="flex justify-center">
+                                <div className="email relative form-floating mb-3 w-full">
+                                    <Input
+                                        className="w-full h-10"
+                                        onChange={(e) => {
+                                            setEmailOwner(e.target.value);
+                                        }}
                                     />
                                 </div>
                             </div>
