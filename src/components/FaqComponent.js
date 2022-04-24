@@ -13,15 +13,16 @@ const FaqComponent = ({ title, description }) => {
         <div className="px-8 py-6 border rounded-xl mb-3">
             <div className="flex flex-col text-left">
                 <div
+                    onClick={toggleHide}
                     className={`${
                         hide ? "" : "mb-4"
-                    } flex justify-between items-center`}
+                    } flex justify-between items-center cursor-pointer`}
                 >
-                    <div className="">{title}</div>
+                    <div>{title}</div>
                     {hide ? (
-                        <FontAwesomeIcon icon={faPlus} onClick={toggleHide} />
+                        <FontAwesomeIcon icon={faPlus} />
                     ) : (
-                        <FontAwesomeIcon icon={faMinus} onClick={toggleHide} />
+                        <FontAwesomeIcon icon={faMinus} />
                     )}
                 </div>
                 {hide ? (
