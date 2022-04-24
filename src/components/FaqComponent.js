@@ -18,7 +18,7 @@ const FaqComponent = ({ title, description }) => {
                         hide ? "" : "mb-4"
                     } flex justify-between items-center cursor-pointer`}
                 >
-                    <div>{title}</div>
+                    <div className="text-base lg:text-lg">{title}</div>
                     {hide ? (
                         <FontAwesomeIcon icon={faPlus} />
                     ) : (
@@ -28,7 +28,16 @@ const FaqComponent = ({ title, description }) => {
                 {hide ? (
                     ""
                 ) : (
-                    <div className="font-normal pr-10">{description}</div>
+                    <div className="font-normal pr-10">
+                        {description.split("<br/>").map((line) => {
+                            return (
+                                <div key={line}>
+                                    {line}
+                                    <br />
+                                </div>
+                            );
+                        })}
+                    </div>
                 )}
             </div>
         </div>

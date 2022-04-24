@@ -109,15 +109,15 @@ const RoomAvailability = () => {
                 {rooms.map((room, i) => {
                     return (
                         <div
-                            className="bg-white rounded-xl p-8 lg:p-10 flex flex-col lg:flex-row justify-center items-center"
+                            className="bg-white rounded-xl p-8 lg:p-10 flex flex-col lg:grid lg:grid-cols-4 lg:gap-10 justify-center items-center"
                             key={i}
                         >
                             <img
                                 src={room.img}
                                 alt={room.name}
-                                className="w-1/2 mb-3 lg:mb-0 lg:w-1/4 mr-6"
+                                className="w-1/2 mb-3 lg:mb-0 lg:w-full mr-6"
                             />
-                            <div className="lg:grid lg:grid-cols-4 items-center">
+                            <div className="lg:grid lg:grid-cols-4 lg:col-span-3 items-center">
                                 <div className="flex flex-col mb-3 lg:mb-0 text-left col-span-3 mr-6">
                                     <div className="text-base lg:text-lg">
                                         {room.name}

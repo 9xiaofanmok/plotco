@@ -257,10 +257,12 @@ const BookRoom = () => {
                             <div className="flex justify-center">
                                 <div className="email relative form-floating mb-3 w-full">
                                     <Input
+                                        type="email"
                                         className="w-full h-10"
                                         onChange={(e) => {
                                             setEmailOwner(e.target.value);
                                         }}
+                                        pattern=".*\@singaporeair.com.sg$"
                                     />
                                 </div>
                             </div>
