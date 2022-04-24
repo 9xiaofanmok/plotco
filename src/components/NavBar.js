@@ -12,17 +12,17 @@ const NavBar = () => {
             />
             <div className="text-white text-xs sm:text-base md:text-lg lg:text-xl text-right flex flex-row">
                 <Link to="/">
-                    <div className="pl-3 sm:pl-10 lg:pl-20  hover:text-grey-100 visited:text-white">
+                    <div className="pl-3 sm:pl-10 lg:pl-20 text-white hover:text-plotco-blue transition delay-150 duration-300 visited:text-white">
                         Home
                     </div>
                 </Link>
                 <a href="#Rooms">
-                    <div className="pl-3 sm:pl-10 lg:pl-20 hover:text-grey-100 visited:text-white">
+                    <div className="pl-3 sm:pl-10 lg:pl-20 text-white hover:text-plotco-blue transition delay-150 duration-300 visited:text-white">
                         Our Rooms
                     </div>
                 </a>
                 <a href="#FAQs">
-                    <div className="pl-3 sm:pl-10 lg:pl-20 hover:text-grey-100 visited:text-white">
+                    <div className="pl-3 sm:pl-10 lg:pl-20 text-white hover:text-plotco-blue transition delay-150 duration-300 visited:text-white">
                         FAQs
                     </div>
                 </a>

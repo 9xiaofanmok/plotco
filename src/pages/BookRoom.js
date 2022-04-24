@@ -22,6 +22,7 @@ const BookRoom = () => {
     const navigate = useNavigate();
 
     const [errorMsg, setErrorMsg] = useState(false);
+    const [emailError, setEmailError] = useState(false);
 
     const [date, setDate] = useState();
     const [startTime, setStartTime] = useState();
@@ -52,12 +53,12 @@ const BookRoom = () => {
     const [disableBtn, setDisableBtn] = useState(true);
 
     useEffect(() => {
-        if (date && startTime && endTime && emails) {
+        if (date && startTime && endTime && emailOwner) {
             setDisableBtn(false);
         } else {
             setDisableBtn(true);
         }
-    }, [date, startTime, endTime, emails]);
+    }, [date, startTime, endTime, emailOwner]);
 
     const createBooking = async (e) => {
         e.preventDefault();
@@ -107,7 +108,10 @@ const BookRoom = () => {
                     setStartTime(moment(startTime, ["h:mm A"]).format("HH:mm"));
                     setEndTime(moment(endTime, ["h:mm A"]).format("HH:mm"));
 
-                    let allEmails = [...emails];
+                    let allEmails = [];
+                    if (emails && !emails.length > 0) {
+                        allEmails = [...emails];
+                    }
                     allEmails.push(emailOwner);
 
                     const newBooking = {
@@ -144,6 +148,7 @@ const BookRoom = () => {
                             start_time: startTime,
                             end_time: endTime,
                             email: allEmails[i],
+                            link: room.link,
                         };
                         promises.push(
                             new Promise((resolve) => {
@@ -199,9 +204,16 @@ const BookRoom = () => {
                         ) : (
                             ""
                         )}
+                        {emailError ? (
+                            <div className="text-plotco-red font-normal font-proxima">
+                                Email must be a Singapore Airlines' email
+                            </div>
+                        ) : (
+                            ""
+                        )}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Date
+                                Date<span className="text-plotco-red">*</span>
                             </label>
                             <div className="flex items-center justify-center">
                                 <div
@@ -226,6 +238,7 @@ const BookRoom = () => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Start Time
+                                <span className="text-plotco-red">*</span>
                             </label>
                             <div className="flex justify-center">
                                 <div className="timepicker relative form-floating mb-3 w-full">
@@ -253,6 +266,7 @@ const BookRoom = () => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Your Email
+                                <span className="text-plotco-red">*</span>
                             </label>
                             <div className="flex justify-center">
                                 <div className="email relative form-floating mb-3 w-full">
@@ -260,7 +274,16 @@ const BookRoom = () => {
                                         type="email"
                                         className="w-full h-10"
                                         onChange={(e) => {
-                                            setEmailOwner(e.target.value);
+                                            if (
+                                                e.target.value.endsWith(
+                                                    "@singaporeair.com.sg"
+                                                )
+                                            ) {
+                                                setEmailError(false);
+                                                setEmailOwner(e.target.value);
+                                            } else {
+                                                setEmailError(true);
+                                            }
                                         }}
                                         pattern=".*\@singaporeair.com.sg$"
                                     />
