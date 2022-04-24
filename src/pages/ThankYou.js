@@ -8,7 +8,9 @@ const ThankYou = () => {
             </div>
             <div className="text-sm lg:text-base font-normal">
                 An email invite has been sent to all attendees. Do join in
-                through the link. See you in the Metaverse!
+                through the link.
+                <br />
+                See you in the Metaverse!
             </div>
         </div>
     );

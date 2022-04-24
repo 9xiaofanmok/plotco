@@ -1,4 +1,5 @@
 import { DatePicker, TimePicker } from "antd";
+import { db } from "../utils/firebase";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { createSearchParams, useNavigate } from "react-router-dom";
@@ -24,7 +25,7 @@ const BookingComponent = ({
         }
     }, [date, startTime, endTime]);
 
-    const checkAvail = () => {
+    const checkAvail = async () => {
         navigate(
             `/check-avail?date=${date}&startTime=${startTime}&endTime=${endTime}`
         );
@@ -62,50 +63,30 @@ const BookingComponent = ({
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Start Time
+                            Time
                         </label>
                         <div className="flex justify-center">
                             <div className="timepicker relative form-floating mb-3 w-full">
-                                <TimePicker
+                                <TimePicker.RangePicker
                                     className="w-full h-11"
-                                    onChange={(date, dateString) => {
-                                        setStartTime(dateString);
+                                    onChange={(dates, dateStrings) => {
+                                        setStartTime(dateStrings[0]);
+                                        setEndTime(dateStrings[1]);
                                     }}
                                     format="h:mm a"
                                     minuteStep={30}
-                                    value={
+                                    value={[
                                         startTime
                                             ? moment(startTime, "h:mm a")
-                                            : null
-                                    }
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            End Time
-                        </label>
-                        <div className="flex justify-center">
-                            <div className="timepicker relative form-floating mb-3 w-full">
-                                <TimePicker
-                                    className="w-full h-11"
-                                    onChange={(date, dateString) => {
-                                        setEndTime(dateString);
-                                    }}
-                                    format="h:mm a"
-                                    minuteStep={30}
-                                    value={
+                                            : null,
                                         endTime
                                             ? moment(endTime, "h:mm a")
-                                            : null
-                                    }
+                                            : null,
+                                    ]}
                                 />
                             </div>
                         </div>
                     </div>
-
                     <div className="h-1/2 self-center" onClick={checkAvail}>
                         <ButtonComponent
                             text="Check Availability"

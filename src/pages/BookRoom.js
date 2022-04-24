@@ -7,17 +7,20 @@ import {
     getDoc,
     addDoc,
     collection,
-    Firestore,
-    setDoc,
+    query,
+    getDocs,
+    where,
 } from "firebase/firestore";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { DatePicker, TimePicker, Input } from "antd";
 import moment from "moment";
 import ButtonComponent from "../components/ButtonComponent";
-const { TextArea } = Input;
 
 const BookRoom = () => {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+
+    const [errorMsg, setErrorMsg] = useState(false);
 
     const [date, setDate] = useState();
     const [startTime, setStartTime] = useState();
@@ -57,28 +60,82 @@ const BookRoom = () => {
 
     const createBooking = async () => {
         try {
-            console.log({
-                date,
-                startTime,
-                endTime,
-                emails,
-            });
+            // check if room's booking has clashing time
+            let clashingBooking = false;
 
-            if (searchParams.get("roomId"))
-                await addDoc(
+            if (date) {
+                const q = query(
                     collection(
                         db,
                         "rooms",
                         searchParams.get("roomId"),
                         "bookings"
                     ),
-                    {
-                        date,
-                        startTime,
-                        endTime,
-                        emails,
-                    }
+                    where("date", "==", date)
                 );
+
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach((doc) => {
+                    const booking = doc.data();
+                    console.log(booking);
+
+                    const startTime24 = moment(startTime, ["h:mm A"]).format(
+                        "HH:mm"
+                    );
+                    const endTime24 = moment(endTime, ["h:mm A"]).format(
+                        "HH:mm"
+                    );
+                    console.log(`booking start time: ${booking.startTime}`);
+                    console.log(`start time: ${startTime24}`);
+                    console.log(`booking end time: ${booking.endTime}`);
+                    console.log(`end time: ${endTime24}`);
+                    if (
+                        (booking.startTime <= startTime24 &&
+                            booking.endTime >= endTime24) ||
+                        (booking.startTime >= startTime24 &&
+                            booking.endTime >= endTime24) ||
+                        (booking.startTime >= startTime24 &&
+                            booking.endTime >= endTime24) ||
+                        (booking.startTime >= startTime24 &&
+                            booking.endTime <= endTime24)
+                    ) {
+                        console.log("yes");
+                        setErrorMsg(true);
+                        setDisableBtn(true);
+                        clashingBooking = true;
+                    }
+                });
+
+                if (!clashingBooking) {
+                    setErrorMsg(false);
+                    console.log(moment(endTime, ["h:mm A"]).format("HH:mm"));
+                    setStartTime(moment(startTime, ["h:mm A"]).format("HH:mm"));
+                    setEndTime(moment(endTime, ["h:mm A"]).format("HH:mm"));
+                    const newBooking = {
+                        roomId: searchParams.get("roomId"),
+                        date,
+                        startTime: moment(startTime, ["h:mm A"]).format(
+                            "HH:mm"
+                        ),
+                        endTime: moment(endTime, ["h:mm A"]).format("HH:mm"),
+                        emails,
+                    };
+
+                    if (searchParams.get("roomId")) {
+                    }
+                    await addDoc(
+                        collection(
+                            db,
+                            "rooms",
+                            searchParams.get("roomId"),
+                            "bookings"
+                        ),
+                        newBooking
+                    );
+
+                    navigate("/thankyou");
+                }
+            }
         } catch (err) {
             console.error(err);
         }
@@ -105,6 +162,14 @@ const BookRoom = () => {
 
                 <div className="rounded-xl bg-white shadow-xl p-10">
                     <div className="grid grid-cols-1 gap-6 text-left">
+                        {errorMsg ? (
+                            <div className="text-plotco-red font-normal font-proxima">
+                                This date and time is not available, please
+                                choose another slot
+                            </div>
+                        ) : (
+                            ""
+                        )}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Date
@@ -135,41 +200,22 @@ const BookRoom = () => {
                             </label>
                             <div className="flex justify-center">
                                 <div className="timepicker relative form-floating mb-3 w-full">
-                                    <TimePicker
+                                    <TimePicker.RangePicker
                                         className="w-full h-11"
-                                        onChange={(date, dateString) => {
-                                            setStartTime(dateString);
+                                        onChange={(dates, dateStrings) => {
+                                            setStartTime(dateStrings[0]);
+                                            setEndTime(dateStrings[1]);
                                         }}
                                         format="h:mm a"
                                         minuteStep={30}
-                                        value={
+                                        value={[
                                             startTime
                                                 ? moment(startTime, "h:mm a")
-                                                : null
-                                        }
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                End Time
-                            </label>
-                            <div className="flex justify-center">
-                                <div className="timepicker relative form-floating mb-3 w-full">
-                                    <TimePicker
-                                        className="w-full h-11"
-                                        onChange={(date, dateString) => {
-                                            setEndTime(dateString);
-                                        }}
-                                        format="h:mm a"
-                                        minuteStep={30}
-                                        value={
+                                                : null,
                                             endTime
                                                 ? moment(endTime, "h:mm a")
-                                                : null
-                                        }
+                                                : null,
+                                        ]}
                                     />
                                 </div>
                             </div>

@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../utils/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import {
+    collection,
+    getDocs,
+    collectionGroup,
+    query,
+    where,
+} from "firebase/firestore";
+import moment from "moment";
 
 import BookingComponent from "../components/BookingComponent";
 import ButtonComponent from "../components/ButtonComponent";
@@ -28,16 +35,60 @@ const RoomAvailability = () => {
     };
 
     useEffect(() => {
+        setDate(searchParams.get("date"));
+        setStartTime(searchParams.get("startTime"));
+        setEndTime(searchParams.get("endTime"));
+
         const getRooms = async () => {
             const data = await getDocs(roomsCollectionRef);
             setRooms(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         };
 
-        getRooms();
+        getRooms().then(() => {
+            const discardRooms = [];
+            // check if booking date is the same, startTime and endTime are between
+            if (date) {
+                const getBookings = async () => {
+                    const bookings = query(
+                        collectionGroup(db, "bookings"),
+                        where("date", "==", date)
+                    );
 
-        setDate(searchParams.get("date"));
-        setStartTime(searchParams.get("startTime"));
-        setEndTime(searchParams.get("endTime"));
+                    const querySnapshot = await getDocs(bookings);
+                    querySnapshot.forEach((doc) => {
+                        const booking = doc.data();
+
+                        const startTime24 = moment(startTime, [
+                            "h:mm A",
+                        ]).format("HH:mm");
+                        const endTime24 = moment(endTime, ["h:mm A"]).format(
+                            "HH:mm"
+                        );
+                        if (
+                            (booking.startTime <= startTime24 &&
+                                booking.endTime >= endTime24) ||
+                            (booking.startTime >= startTime24 &&
+                                booking.endTime >= endTime24) ||
+                            (booking.startTime >= startTime24 &&
+                                booking.endTime >= endTime24) ||
+                            (booking.startTime >= startTime24 &&
+                                booking.endTime <= endTime24)
+                        ) {
+                            discardRooms.push(booking.roomId);
+                        }
+                    });
+                };
+                getBookings().then(() => {
+                    let filteredRooms = [...rooms];
+                    for (const d of discardRooms) {
+                        filteredRooms = filteredRooms.filter(
+                            (room) => room.id !== d
+                        );
+                    }
+                    setRooms(filteredRooms);
+                });
+            }
+        });
     }, [searchParams]);
 
     const bookNow = (id, name) => {
@@ -52,7 +103,9 @@ const RoomAvailability = () => {
                 <BookingComponent {...props} />
             </div>
 
-            <div className="bg-plotco-yellow rounded-xl p-8 lg:p-16 w-4/5 mx-auto grid grid-rows-3 gap-8 mb-20">
+            <div
+                className={`bg-plotco-yellow rounded-xl p-8 lg:p-16 w-4/5 mx-auto grid grid-rows-${rooms.length} gap-8 mb-20`}
+            >
                 {rooms.map((room, i) => {
                     return (
                         <div
