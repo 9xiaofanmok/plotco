@@ -58,6 +58,7 @@ const Home = () => {
                 <BookingComponent {...props} />
             </div>
             <div id="Rooms" className="pt-1 md:pt-10">
+                <div className="text-lg lg:text-2xl mt-10">Our Rooms</div>
                 {rooms.map((room) => {
                     return (
                         <RoomDescriptionComponent room={room} key={room.id} />

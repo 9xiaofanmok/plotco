@@ -10,7 +10,7 @@ const RoomDescriptionComponent = ({ room }) => {
     return (
         <div>
             <div
-                className={`flex flex-col md:grid md:grid-cols-2 gap-10 w-2/3 mx-auto my-32 h-full`}
+                className={`flex flex-col lg:grid lg:grid-cols-2 gap-10 w-2/3 mx-auto mt-5 mb-16 lg:mt-20 lg:mb-32 h-full`}
             >
                 <div className="w-full h-full">
                     <img src={room.img} alt={room.title} />

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { db } from "../utils/firebase";
 import { ReactMultiEmail, isEmail } from "react-multi-email";
 import "react-multi-email/style.css";
+import emailjs from "@emailjs/browser";
 import {
     doc,
     getDoc,
@@ -37,7 +38,6 @@ const BookRoom = () => {
         const roomId = searchParams.get("roomId");
 
         if (roomId) {
-            console.log(roomId);
             const roomCollectionRef = doc(db, "rooms", roomId);
             const getRoom = async () => {
                 const data = await getDoc(roomCollectionRef);
@@ -58,7 +58,8 @@ const BookRoom = () => {
         }
     }, [date, startTime, endTime, emails]);
 
-    const createBooking = async () => {
+    const createBooking = async (e) => {
+        e.preventDefault();
         try {
             // check if room's booking has clashing time
             let clashingBooking = false;
@@ -77,7 +78,6 @@ const BookRoom = () => {
                 const querySnapshot = await getDocs(q);
                 querySnapshot.forEach((doc) => {
                     const booking = doc.data();
-                    console.log(booking);
 
                     const startTime24 = moment(startTime, ["h:mm A"]).format(
                         "HH:mm"
@@ -85,10 +85,6 @@ const BookRoom = () => {
                     const endTime24 = moment(endTime, ["h:mm A"]).format(
                         "HH:mm"
                     );
-                    console.log(`booking start time: ${booking.startTime}`);
-                    console.log(`start time: ${startTime24}`);
-                    console.log(`booking end time: ${booking.endTime}`);
-                    console.log(`end time: ${endTime24}`);
                     if (
                         (booking.startTime <= startTime24 &&
                             booking.endTime >= endTime24) ||
@@ -99,7 +95,6 @@ const BookRoom = () => {
                         (booking.startTime >= startTime24 &&
                             booking.endTime <= endTime24)
                     ) {
-                        console.log("yes");
                         setErrorMsg(true);
                         setDisableBtn(true);
                         clashingBooking = true;
@@ -108,7 +103,6 @@ const BookRoom = () => {
 
                 if (!clashingBooking) {
                     setErrorMsg(false);
-                    console.log(moment(endTime, ["h:mm A"]).format("HH:mm"));
                     setStartTime(moment(startTime, ["h:mm A"]).format("HH:mm"));
                     setEndTime(moment(endTime, ["h:mm A"]).format("HH:mm"));
                     const newBooking = {
@@ -133,7 +127,35 @@ const BookRoom = () => {
                         newBooking
                     );
 
-                    navigate("/thankyou");
+                    const promises = [];
+
+                    for (let i = 0; i < emails.length; i++) {
+                        const templateParams = {
+                            owner_email: emails[0],
+                            room_name: roomName,
+                            date,
+                            start_time: startTime,
+                            end_time: endTime,
+                            email: emails[i],
+                        };
+                        promises.push(
+                            new Promise((resolve) => {
+                                emailjs.send(
+                                    "plotco_service",
+                                    "template_oh82r8m",
+                                    templateParams,
+                                    "MwWB8c-__LRUm3iJU"
+                                );
+                                resolve();
+                            })
+                        );
+
+                        Promise.all(promises)
+                            .then(() => navigate("/thankyou"))
+                            .catch((err) => {
+                                console.error(err);
+                            });
+                    }
                 }
             }
         } catch (err) {

@@ -36,7 +36,7 @@ const BookingComponent = ({
             <div className="text-white text-lg mb-4 text-left">Book A Room</div>
 
             <div className="rounded-xl bg-white shadow-xl p-10">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 text-left">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-left">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Date
