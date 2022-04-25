@@ -43,7 +43,7 @@ const Home = () => {
                             <span className="text-plotco-blue">Connected</span>{" "}
                             With Your Coworkers.
                         </div>
-                        <div className="text-base lg:text-lg font-proxima font-normal text-white md:w-2/3 mx-auto">
+                        <div className="text-lg lg:text-xl font-proxima font-semibold text-white md:w-2/3 mx-auto">
                             Hang out, grab a lunch or conduct your work meetings
                             in our rooms with your colleagues today
                         </div>
